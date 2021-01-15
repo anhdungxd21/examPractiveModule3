@@ -22,6 +22,8 @@ public class ProductDAO {
                                                         "FROM products " +
                                                         "INNER JOIN category ON products.categoryId=category.id WHERE products.id = ?;";
 
+    private static final String UPDATE_PRODUCT_BY_ID = "UPDATE products SET productName = ?, price = ?, quantity = ?, color = ?, descripts = ?, categoryId = ?  categoryId WHERE id = ?;";
+
     public ProductDAO(){}
 
     protected Connection getConnection(){
@@ -70,15 +72,17 @@ public class ProductDAO {
 
             ResultSet rs = preparedStatement.executeQuery();
 
-            int id = rs.getInt("products.id");
-            String productName = rs.getString("products.productName");
-            double price = rs.getDouble("products.price");
-            int quantity = rs.getInt("products.quantity");
-            String color = rs.getString("products.color");
-            String descripts = rs.getString("products.descripts");
-            String category = rs.getString("category.categoryDevice");
-            int cateforyId = rs.getInt("products.categoryId");
-            product =  new Product(id,productName,price,quantity,color,descripts,category,cateforyId);
+            while (rs.next()){
+                int id = rs.getInt("products.id");
+                String productName = rs.getString("products.productName");
+                double price = rs.getDouble("products.price");
+                int quantity = rs.getInt("products.quantity");
+                String color = rs.getString("products.color");
+                String descripts = rs.getString("products.descripts");
+                String category = rs.getString("category.categoryDevice");
+                int cateforyId = rs.getInt("products.categoryId");
+                product =  new Product(id,productName,price,quantity,color,descripts,category,cateforyId);
+            }
 
         }catch (SQLException e){
             e.printStackTrace();
@@ -104,5 +108,26 @@ public class ProductDAO {
         }
 
         return  isInsert;
+    }
+
+    public boolean updateProduct(Product product){
+        boolean rowUpdate = false;
+
+        try(Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_PRODUCT_BY_ID)){
+
+            preparedStatement.setString(1,product.getProductName());
+            preparedStatement.setDouble(2,product.getPrice());
+            preparedStatement.setInt(3,product.getQuantity());
+            preparedStatement.setString(4,product.getColor());
+            preparedStatement.setString(5,product.getCategory());
+            preparedStatement.setInt(6,product.getCategoryId());
+            preparedStatement.setInt(7,product.getId());
+            rowUpdate = preparedStatement.executeUpdate() > 0;
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return rowUpdate;
     }
 }

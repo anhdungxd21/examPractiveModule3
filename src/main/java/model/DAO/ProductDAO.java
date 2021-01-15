@@ -26,6 +26,10 @@ public class ProductDAO {
 
     private static final String DELETE_PRODUCT_BY_ID = "DELETE FROM products where id = ?";
 
+    private static final String SEARCH_PRODUCT = "SELECT products.id, products.productName, products.price, products.quantity, products.color, products.descripts, category.categoryDevice,products.categoryId " +
+                                                "FROM products " +
+                                                "INNER JOIN category ON products.categoryId=category.id WHERE LIKE ?;";
+
     public ProductDAO(){}
 
     protected Connection getConnection(){
@@ -63,6 +67,32 @@ public class ProductDAO {
         }
 
         return productList;
+    }
+    public List<Product> searchProduct(String search){
+
+        List<Product> productList = new ArrayList<>();
+        try(Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_PRODUCT)){
+            preparedStatement.setString(1,"%"+search+"%");
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while(rs.next()){
+                int id = rs.getInt("products.id");
+                String productName = rs.getString("products.productName");
+                double price = rs.getDouble("products.price");
+                int quantity = rs.getInt("products.quantity");
+                String color = rs.getString("products.color");
+                String descripts = rs.getString("products.descripts");
+                String category = rs.getString("category.categoryDevice");
+                int cateforyId = rs.getInt("products.categoryId");
+                productList.add(new Product(id,productName,price,quantity,color,descripts,category,cateforyId));
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return productList;
+
     }
 
     public Product getProductById(int productId){

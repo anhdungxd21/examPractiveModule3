@@ -91,11 +91,19 @@ public class ProductServlet extends HttpServlet {
                 editProduct(request,response);
                 break;
             case "search":
+                searchProduct(request, response);
                 break;
             default:
 
                 break;
         }
+    }
+    private void searchProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        String search = request.getParameter("search");
+        List<Product> productList = productDAO.searchProduct(search);
+        request.setAttribute("productList",productList);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/product/searchList.jsp");
+        dispatcher.forward(request,response);
     }
 
     private void createProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

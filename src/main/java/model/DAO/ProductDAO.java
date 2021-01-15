@@ -16,7 +16,7 @@ public class ProductDAO {
                                 + " INNER JOIN category ON products.categoryId=category.id;";
 
     private static final String INSERT_PRODUCT = "INSERT INTO products(productName, price, quantity, color, descripts, categoryId) VALUES"
-                                                + " (?, ?, ?,'?',?, ?);";
+                                                + " (?, ?, ?, ?, ?, ?);";
 
     public ProductDAO(){}
 
@@ -56,5 +56,22 @@ public class ProductDAO {
 
         return productList;
     }
+    public boolean insertProduct(Product product){
+        boolean isInsert = false;
 
+        try(Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PRODUCT)){
+            preparedStatement.setString(1,product.getProductName());
+            preparedStatement.setDouble(2,product.getPrice());
+            preparedStatement.setInt(3,product.getQuantity());
+            preparedStatement.setString(4,product.getColor());
+            preparedStatement.setString(5,product.getCategory());
+            preparedStatement.setInt(6,product.getCategoryId());
+            isInsert = preparedStatement.execute();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return  isInsert;
+    }
 }

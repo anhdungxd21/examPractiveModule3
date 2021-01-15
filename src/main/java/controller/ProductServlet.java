@@ -70,7 +70,20 @@ public class ProductServlet extends HttpServlet {
         }
     }
 
-    private void createProduct(HttpServletRequest request, HttpServletResponse response){
-        request
+    private void createProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        String productName = request.getParameter("nameProduct");
+        double price = Double.parseDouble(request.getParameter("price"));
+        int quantity = Integer.parseInt(request.getParameter("quantity"));
+        String color = request.getParameter("color");
+        String description = request.getParameter("description");
+        int categoryId = Integer.parseInt(request.getParameter("categoryId"));
+
+        productDAO.insertProduct(new Product(productName,price,quantity,color,description,categoryId));
+
+        request.setAttribute("message" , "Add product success");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/products?action=create");
+        dispatcher.forward(request,response);
+
+
     }
 }

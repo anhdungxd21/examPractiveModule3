@@ -14,7 +14,7 @@
 </head>
 <body>
 <div style="float: left;width: 60%">
-    <a href="?action=create">
+    <a href="/products?action=create">
         + Add New Product
     </a>
 </div>

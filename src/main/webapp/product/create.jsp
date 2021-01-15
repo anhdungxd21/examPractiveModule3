@@ -12,6 +12,9 @@
     <title>Product Management</title>
 </head>
 <body>
+    <c:if test="${message!=null}">
+        <p>${message}</p>
+    </c:if>
     <fieldset>
         <legend>ADD NEW PRODUCT</legend>
         <h3>Name</h3><br>
@@ -24,7 +27,7 @@
         <input type="text" name="color" placeholder="Color"><br>
         <h3>Description</h3>
         <input type="text" name="description" placeholder="Description"><br>
-        <select name="category">
+        <select name="categoryId">
             <c:forEach items="${categoryList}" var="category">
                 <option value="${category.getId()}">${category.getCategoryDevice()}</option>
             </c:forEach>

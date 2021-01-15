@@ -18,6 +18,10 @@ public class ProductDAO {
     private static final String INSERT_PRODUCT = "INSERT INTO products(productName, price, quantity, color, descripts, categoryId) VALUES"
                                                 + " (?, ?, ?, ?, ?, ?);";
 
+    private static final String SELECT_PRODUCT_BY_ID = "SELECT products.id, products.productName, products.price, products.quantity, products.color, products.descripts, category.categoryDevice,products.categoryId " +
+                                                        "FROM products " +
+                                                        "INNER JOIN category ON products.categoryId=category.id WHERE products.id = ?;";
+
     public ProductDAO(){}
 
     protected Connection getConnection(){
@@ -56,6 +60,33 @@ public class ProductDAO {
 
         return productList;
     }
+
+    public Product getProductById(int productId){
+        Product product = null;
+
+        try(Connection connection = getConnection();
+           PreparedStatement preparedStatement = connection.prepareStatement(SELECT_PRODUCT_BY_ID)){
+            preparedStatement.setInt(1,productId);
+
+            ResultSet rs = preparedStatement.executeQuery();
+
+            int id = rs.getInt("products.id");
+            String productName = rs.getString("products.productName");
+            double price = rs.getDouble("products.price");
+            int quantity = rs.getInt("products.quantity");
+            String color = rs.getString("products.color");
+            String descripts = rs.getString("products.descripts");
+            String category = rs.getString("category.categoryDevice");
+            int cateforyId = rs.getInt("products.categoryId");
+            product =  new Product(id,productName,price,quantity,color,descripts,category,cateforyId);
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return product;
+    }
+
     public boolean insertProduct(Product product){
         boolean isInsert = false;
 
@@ -67,7 +98,7 @@ public class ProductDAO {
             preparedStatement.setString(4,product.getColor());
             preparedStatement.setString(5,product.getCategory());
             preparedStatement.setInt(6,product.getCategoryId());
-            isInsert = preparedStatement.execute();
+            isInsert = preparedStatement.executeUpdate() > 0;
         }catch (SQLException e){
             e.printStackTrace();
         }

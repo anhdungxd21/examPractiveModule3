@@ -36,6 +36,9 @@ public class ProductServlet extends HttpServlet {
             case "create":
                 showCreateForm(request, response);
                 break;
+            case "edit":
+                showEditForm(request,response);
+                break;
             default:
                 showProductList(request, response);
                 break;
@@ -54,6 +57,17 @@ public class ProductServlet extends HttpServlet {
         RequestDispatcher dispatcher = request.getRequestDispatcher("/product/products.jsp");
         dispatcher.forward(request,response);
     }
+
+    private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        Product product = productDAO.getProductById(id);
+        List<Category> categoryList = categoryDAO.getCategoryList();
+        request.setAttribute("categoryList",categoryList);
+        request.setAttribute("product",product);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/product/edit.jsp");
+        dispatcher.forward(request,response);
+    }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -64,13 +78,16 @@ public class ProductServlet extends HttpServlet {
             case "create":
                 createProduct(request, response);
                 break;
+            case "edit":
+                editProduct(request,response);
+                break;
             default:
 
                 break;
         }
     }
 
-    private void createProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    private void createProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String productName = request.getParameter("nameProduct");
         double price = Double.parseDouble(request.getParameter("price"));
         int quantity = Integer.parseInt(request.getParameter("quantity"));
@@ -78,12 +95,21 @@ public class ProductServlet extends HttpServlet {
         String description = request.getParameter("description");
         int categoryId = Integer.parseInt(request.getParameter("categoryId"));
 
-        productDAO.insertProduct(new Product(productName,price,quantity,color,description,categoryId));
+        productDAO.insertProduct(new Product(productName, price, quantity, color, description, categoryId));
 
-        request.setAttribute("message" , "Add product success");
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/products?action=create");
-        dispatcher.forward(request,response);
+        response.sendRedirect("/products");
+    }
 
+    private void editProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        String productName = request.getParameter("nameProduct");
+        double price = Double.parseDouble(request.getParameter("price"));
+        int quantity = Integer.parseInt(request.getParameter("quantity"));
+        String color = request.getParameter("color");
+        String description = request.getParameter("description");
+        int categoryId = Integer.parseInt(request.getParameter("categoryId"));
 
+        productDAO.insertProduct(new Product(productName, price, quantity, color, description, categoryId));
+
+        response.sendRedirect("/products");
     }
 }

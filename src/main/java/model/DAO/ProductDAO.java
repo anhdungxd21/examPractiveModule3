@@ -22,7 +22,9 @@ public class ProductDAO {
                                                         "FROM products " +
                                                         "INNER JOIN category ON products.categoryId=category.id WHERE products.id = ?;";
 
-    private static final String UPDATE_PRODUCT_BY_ID = "UPDATE products SET productName = ?, price = ?, quantity = ?, color = ?, descripts = ?, categoryId = ?  categoryId WHERE id = ?;";
+    private static final String UPDATE_PRODUCT_BY_ID = "UPDATE products SET productName = ?, price = ?, quantity = ?, color = ?, descripts = ?, categoryId = ? WHERE id = ?;";
+
+    private static final String DELETE_PRODUCT_BY_ID = "DELETE FROM products where id = ?";
 
     public ProductDAO(){}
 
@@ -124,6 +126,21 @@ public class ProductDAO {
             preparedStatement.setInt(6,product.getCategoryId());
             preparedStatement.setInt(7,product.getId());
             rowUpdate = preparedStatement.executeUpdate() > 0;
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return rowUpdate;
+    }
+
+    public boolean deleteProduct(int id){
+        boolean rowUpdate = false;
+
+        try(Connection connection= getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_PRODUCT_BY_ID)){
+            preparedStatement.setInt(1,id);
+
+            rowUpdate = preparedStatement.executeUpdate()>0;
         }catch (SQLException e){
             e.printStackTrace();
         }

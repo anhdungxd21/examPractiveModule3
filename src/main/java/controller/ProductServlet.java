@@ -39,6 +39,9 @@ public class ProductServlet extends HttpServlet {
             case "edit":
                 showEditForm(request,response);
                 break;
+            case "delete":
+                deleteUser(request,response);
+                break;
             default:
                 showProductList(request, response);
                 break;
@@ -68,6 +71,12 @@ public class ProductServlet extends HttpServlet {
         dispatcher.forward(request,response);
     }
 
+    private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        int id = Integer.parseInt(request.getParameter("id"));
+        productDAO.deleteProduct(id);
+        response.sendRedirect("/products");
+    }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -80,6 +89,8 @@ public class ProductServlet extends HttpServlet {
                 break;
             case "edit":
                 editProduct(request,response);
+                break;
+            case "search":
                 break;
             default:
 

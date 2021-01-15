@@ -28,7 +28,7 @@ public class ProductDAO {
 
     private static final String SEARCH_PRODUCT = "SELECT products.id, products.productName, products.price, products.quantity, products.color, products.descripts, category.categoryDevice,products.categoryId " +
                                                 "FROM products " +
-                                                "INNER JOIN category ON products.categoryId=category.id WHERE LIKE ?;";
+                                                "INNER JOIN category ON products.categoryId=category.id WHERE products.productName LIKE ?;";
 
     public ProductDAO(){}
 
@@ -72,7 +72,7 @@ public class ProductDAO {
 
         List<Product> productList = new ArrayList<>();
         try(Connection connection = getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_PRODUCT)){
+            PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_PRODUCT)){
             preparedStatement.setString(1,"%"+search+"%");
             ResultSet rs = preparedStatement.executeQuery();
 

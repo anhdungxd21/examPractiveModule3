@@ -19,8 +19,8 @@
     </a>
 </div>
 <div style="float: left;width: 30%">
-    <form method="post">
-        <input type="text" name="search" placeholder="Search">
+    <form action="/products?action=search" method="post">
+        <input type="text" name="search"  placeholder="Search">
         <input type="submit">
     </form>
 </div>
